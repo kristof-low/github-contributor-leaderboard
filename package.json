@@ -1,6 +1,6 @@
 {
     "name": "update-contributor-leaderboard",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "main": "./dist/index.js",
     "type": "module",
     "scripts": {
@@ -18,7 +18,7 @@
         "prepack": "npm run build:prod"
     },
 
-    "keywords": ["action", "github", "leaderboard", "workflows", "typescript"],
+    "keywords": ["action", "leaderboard", "contributors", "workflows", "typescript"],
     "author": "Christof Louw",
     "license": "ISC",
     "description": "An action for updating/adding the contributor leaderboard section of a repo's README.md",

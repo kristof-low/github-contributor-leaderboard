@@ -28,6 +28,10 @@ inputs:
     required: false
     default: 'github-actions[bot]@users.noreply.github.com'
 
+  commit-message:
+    description: 'The commit message to use for the commit'
+    required: false
+    default: 'chore: update contributor leaderboard'
 runs:
   using: 'node20'
   main: 'dist/index.js'
