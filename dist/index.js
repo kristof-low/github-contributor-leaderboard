@@ -11,6 +11,7 @@ const sectionEnd = core.getInput("sectionEnd") || undefined;
 const maxContributors = Number(core.getInput("maxContributors")) || 10;
 const gitUserName = core.getInput("username") || "github-actions[bot]";
 const gitUserEmail = core.getInput("email") || "github-actions[bot]@users.noreply.github.com";
+const commitMessage = core.getInput("commit-message") || "chore: update contributor leaderboard";
 const git = new Git({ name: gitUserName, email: gitUserEmail });
 const contributors = getContributors(owner, repo, maxContributors);
 const leaderboard = generateContributorLeaderboard(contributors);
@@ -22,6 +23,6 @@ const readmeUpdated = updateREADME(leaderboard, {
 });
 if (readmeUpdated) {
     git.add("README.md");
-    git.commit("chore: update contributors leaderboard");
+    git.commit(commitMessage);
     git.push();
 }
