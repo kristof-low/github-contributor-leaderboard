@@ -1,0 +1,33 @@
+name: 'Update Contributor Leaderboard'
+
+description: 'Updates the leaderboard of contributors in the repo''s README.md'
+
+inputs:
+  max-contributors:
+    description: 'The maximum number of contributors to show in the leaderboard'
+    required: false
+    default: '10'
+
+  section-start:
+    description: 'The string in README.md indicating where the leaderboard starts'
+    required: false
+    default: '<!-- leaderboard-start -->'
+
+  section-end:
+    description: 'The string in README.md indicating where the leaderboard ends'
+    required: false
+    default: '<!-- leaderboard-end -->'
+
+  username:
+    description: 'The git username to use for the commit'
+    required: false
+    default: 'github-actions[bot]'
+
+  email:
+    description: 'The git email to use for the commit'
+    required: false
+    default: 'github-actions[bot]@users.noreply.github.com'
+
+runs:
+  using: 'node20'
+  main: 'dist/index.js'

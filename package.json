@@ -1,0 +1,35 @@
+{
+    "name": "update-contributor-leaderboard",
+    "version": "1.0.0",
+    "main": "./dist/index.js",
+    "type": "module",
+    "scripts": {
+        "build:tests": "tsc --build ./tests",
+        "build": "tsc --build .",
+        "clean": "rmrf ./dist && tsc --build --clean",
+        "prebuild:prod": "npm run clean && npm i",
+        "build:prod": "tsc -p . --sourceMap false --declaration false",
+        "watch": "tsc --build --watch .",
+        "watch:tests": "tsc --build --watch ./tests/",
+        "prestart": "npm run build",
+        "start": "node .",
+        "pretest": "npm run build:tests",
+        "test": "node --test",
+        "prepack": "npm run build:prod"
+    },
+
+    "keywords": ["action", "github", "leaderboard", "workflows", "typescript"],
+    "author": "Christof Louw",
+    "license": "ISC",
+    "description": "An action for updating/adding the contributor leaderboard section of a repo's README.md",
+    "devDependencies": {
+        "@types/node": "^22.14.1",
+        "typescript": "^5.8.3"
+    },
+    "files": ["dist", "action.yml"],
+    "bundleDependencies": ["@actions/core", "@actions/github"],
+    "dependencies": {
+        "@actions/core": "^1.11.1",
+        "@actions/github": "^6.0.0"
+    }
+}
