@@ -51,7 +51,7 @@ if ($answer -eq "y") {
     git tag -f "v$($versionArray[0]).$($versionArray[1]).$($versionArray[2])"
 
     git push
-    git push --tags
+    git push --tags -f
 } else {
     Write-Host "Skipping commit"
 }
