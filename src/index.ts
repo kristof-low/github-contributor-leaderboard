@@ -31,7 +31,6 @@ const gh = new Gh();
 gh.setupGit();
 
 const git = new Git({ name: gitUserName, email: gitUserEmail });
-git.config({'push.autoSetupRemote': 'true'})
 
 const contributors = getContributors(owner, repo, maxContributors);
 
@@ -39,6 +38,8 @@ const leaderboard = generateContributorLeaderboard(contributors);
 
 git.clone({ repo, owner });
 process.chdir(repo);
+
+git.config({ 'push.autoSetupRemote': 'true' })
 
 if (usePullRequest) {
     git.checkoutB(checkoutBranchName);
