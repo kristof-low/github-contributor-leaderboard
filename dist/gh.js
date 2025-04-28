@@ -11,10 +11,6 @@ import { execFileSync } from "child_process";
  */
 export class Gh {
     /**
-     * the number of the last created pull request
-     */
-    lastPrNumber;
-    /**
      * `gh auth setup-git`
      */
     setupGit() {
@@ -25,28 +21,14 @@ export class Gh {
      * @param head the source branch of the pull request
      */
     prCreateFillHead(head) {
-        const stdout = execFileSync("gh", ["pr", "create", "-f", "--head", head], {
+        execFileSync("gh", ["pr", "create", "-f", "--head", head], {
             encoding: "utf8",
         });
-        const matchResult = /\/pull\/(?<pullNumber>\d+)$/.exec(stdout);
-        if (!matchResult ||
-            !matchResult.groups ||
-            !("pullNumber" in matchResult.groups))
-            throw new Error(`could not determine pull-request number`);
-        this.lastPrNumber = Number(matchResult.groups.pullNumber);
     }
     /**
-     * `gh pr merge --squash --delete-branch <this.lastPrNumber>`
+     * `gh pr merge --squash`
      */
-    prMergeSquashDeleteLastPr() {
-        execFileSync("gh", ["pr", "merge", "--squash", "--delete-branch", `${this.lastPrNumber}`]);
+    prMergeSquash() {
+        execFileSync("gh", ["pr", "merge", "--squash"]);
     }
 }
-// // gh pr
-// gh.pr;
-// // gh pr create
-// gh.pr.create;
-// // gh pr create -f
-// gh.pr.create.fill();
-// // gh pr merge --squash 20
-// gh.pr.merge.squash(20);
