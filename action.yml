@@ -32,6 +32,12 @@ inputs:
     description: 'The commit message to use for the commit'
     required: false
     default: 'chore: update contributor leaderboard'
+
+  use-pull-request:
+    description: 'Boolean indicating whether or not to create a pull-request instead of pushing to the default branch'
+    required: false
+    default: 'false'
+    
 runs:
   using: 'node20'
   main: 'dist/index.js'

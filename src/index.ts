@@ -5,6 +5,7 @@ import { generateContributorLeaderboard } from "./generateContributorLeaderboard
 import { getContributors } from "./getContributors.js";
 import { updateREADME } from "./updateREADME.js";
 import { Git } from "./git.js";
+import { Gh } from "./gh.js";
 
 const owner = github.context.repo.owner;
 const repo = github.context.repo.repo;
@@ -13,11 +14,24 @@ const sectionEnd = core.getInput("sectionEnd") || undefined;
 const maxContributors = Number(core.getInput("maxContributors")) || 10;
 const gitUserName = core.getInput("username") || "github-actions[bot]";
 const gitUserEmail =
-  core.getInput("email") || "github-actions[bot]@users.noreply.github.com";
+    core.getInput("email") || "github-actions[bot]@users.noreply.github.com";
 const commitMessage =
-  core.getInput("commit-message") || "chore: update contributor leaderboard";
-    
+    core.getInput("commit-message") || "chore: update contributor leaderboard";
+const usePullRequest = JSON.parse(core.getInput("use-pull-request") || "false");
+
+/**
+ * the name of the branch used as the source/head in the created pull (PR)
+ * request. Only relevant if a PR is created.
+ *
+ * @todo enable user to specifiy as with `commitMessage`
+ */
+const checkoutBranchName = "update(docs)/update-contributor-leaderboard";
+
+const gh = new Gh();
+gh.setupGit();
+
 const git = new Git({ name: gitUserName, email: gitUserEmail });
+git.config({'push.autoSetupRemote': 'true'})
 
 const contributors = getContributors(owner, repo, maxContributors);
 
@@ -25,6 +39,10 @@ const leaderboard = generateContributorLeaderboard(contributors);
 
 git.clone({ repo, owner });
 process.chdir(repo);
+
+if (usePullRequest) {
+    git.checkoutB(checkoutBranchName);
+}
 
 const readmeUpdated = updateREADME(leaderboard, {
     sectionStart,
@@ -35,4 +53,9 @@ if (readmeUpdated) {
     git.add("README.md");
     git.commit(commitMessage);
     git.push();
+
+    if (usePullRequest) {
+        gh.prCreateFillHead(checkoutBranchName);
+        gh.prMergeSquashDeleteLastPr();
+    }
 }
