@@ -57,6 +57,6 @@ if (readmeUpdated) {
 
     if (usePullRequest) {
         gh.prCreateFillHead(checkoutBranchName);
-        gh.prMergeSquashDeleteLastPr();
+        gh.prMergeSquash();
     }
 }
