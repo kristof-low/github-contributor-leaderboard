@@ -5,6 +5,7 @@ import { getContributors } from "./getContributors.js";
 import { updateREADME } from "./updateREADME.js";
 import { Git } from "./git.js";
 import { Gh } from "./gh.js";
+import { waitSync } from "./utils.js";
 const owner = github.context.repo.owner;
 const repo = github.context.repo.repo;
 const sectionStart = core.getInput("sectionStart") || undefined;
@@ -28,7 +29,7 @@ const contributors = getContributors(owner, repo, maxContributors);
 const leaderboard = generateContributorLeaderboard(contributors);
 git.clone({ repo, owner });
 process.chdir(repo);
-git.config({ 'push.autoSetupRemote': 'true' });
+git.config({ "push.autoSetupRemote": "true" });
 if (usePullRequest) {
     git.checkoutB(checkoutBranchName);
 }
@@ -42,6 +43,13 @@ if (readmeUpdated) {
     git.push();
     if (usePullRequest) {
         gh.prCreateFillHead(checkoutBranchName);
-        gh.prMergeSquash();
+        waitSync(1000); // if you run `gh pr check` too soon after creating the PR,
+        // it will report no checks.
+        gh.prChecksWatchRequired();
+        const { mergeable, state } = gh.prStatusJsonCurrentBranch("mergeable", "state");
+        if (state !== "MERGED" && mergeable !== "MERGEABLE")
+            throw new Error(`cannot merge pull request`);
+        if (state !== "MERGED")
+            gh.prMergeSquashDelete();
     }
 }
