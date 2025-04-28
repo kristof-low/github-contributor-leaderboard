@@ -1,4 +1,5 @@
 $ErrorActionPreference = "Stop"
+$baseBranch = (Get-Content .\.git\head).split("/")[-1] # current branch
 
 function throwIfSaysError {
     param(
@@ -31,7 +32,7 @@ $tarballBasename = "$packageName-$packageVersion.tgz"
 Write-Debug "RepoName: $packageName"
 Write-Debug "tarballBasename: $tarballBasename"
 
-git switch master
+git switch $baseBranch
 
 tar -x -f $tarballBasename
 
