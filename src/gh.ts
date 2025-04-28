@@ -23,15 +23,38 @@ export class Gh {
      * @param head the source branch of the pull request
      */
     prCreateFillHead(head: string) {
-         execFileSync("gh", ["pr", "create", "-f", "--head", head], {
-            encoding: "utf8",
-        });
+        execFileSync("gh", ["pr", "create", "-f", "--head", head]);
     }
 
     /**
-     * `gh pr merge --squash`
+     * `gh pr merge --squash --delete-branch`
      */
-    prMergeSquash() {
-        execFileSync("gh", ["pr", "merge", "--squash"]);
+    prMergeSquashDelete() {
+        execFileSync("gh", ["pr", "merge", "--squash", "--delete-branch"]);
+    }
+
+    /**
+     * `gh pr checks --watch --required`
+     */
+    prChecksWatchRequired() {
+        execFileSync("gh", ["pr", "checks", "--watch", "--required"]);
+    }
+
+    /**
+     * runs `gh pr status --json <fields>`, parses the response and returns the
+     * `currentBranch` field. If no such field exists, returns `undefined`.
+     * 
+     * @param fields the {@link https://cli.github.com/manual/gh_pr_status|json fields} to use.
+     * 
+     * @returns the `currentBranch` field of the response as a JS object with fields
+     * as specified.
+     */
+    prStatusJsonCurrentBranch(...fields: string[]) {
+        const resJson = JSON.parse(
+            execFileSync("gh", ["pr", "status", "--json", fields.join(",")], {
+                encoding: "utf8",
+            })
+        )
+        return resJson.currentBranch;
     }
 }
