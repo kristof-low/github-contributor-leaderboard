@@ -37,15 +37,28 @@ export class Gh {
      * `gh pr checks --watch --required`
      */
     prChecksWatchRequired() {
-        execFileSync("gh", ["pr", "checks", "--watch", "--required"]);
+        try {
+            execFileSync("gh", ["pr", "checks", "--watch", "--required"]); // throws if the PR has no checks
+        } catch (e) {
+            if (
+                e instanceof Error &&
+                "stderr" in e &&
+                e.stderr instanceof Buffer &&
+                e.stderr.toString("utf8").includes("no checks reported")
+            ) {
+                return;
+            } else {
+                throw e;
+            }
+        }
     }
 
     /**
      * runs `gh pr status --json <fields>`, parses the response and returns the
      * `currentBranch` field. If no such field exists, returns `undefined`.
-     * 
+     *
      * @param fields the {@link https://cli.github.com/manual/gh_pr_status|json fields} to use.
-     * 
+     *
      * @returns the `currentBranch` field of the response as a JS object with fields
      * as specified.
      */
@@ -54,7 +67,7 @@ export class Gh {
             execFileSync("gh", ["pr", "status", "--json", fields.join(",")], {
                 encoding: "utf8",
             })
-        )
+        );
         return resJson.currentBranch;
     }
 }
