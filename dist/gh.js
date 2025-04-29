@@ -33,7 +33,20 @@ export class Gh {
      * `gh pr checks --watch --required`
      */
     prChecksWatchRequired() {
-        execFileSync("gh", ["pr", "checks", "--watch", "--required"]);
+        try {
+            execFileSync("gh", ["pr", "checks", "--watch", "--required"]); // throws if the PR has no checks
+        }
+        catch (e) {
+            if (e instanceof Error &&
+                "stderr" in e &&
+                e.stderr instanceof Buffer &&
+                e.stderr.toString("utf8").includes("no checks reported")) {
+                return;
+            }
+            else {
+                throw e;
+            }
+        }
     }
     /**
      * runs `gh pr status --json <fields>`, parses the response and returns the
