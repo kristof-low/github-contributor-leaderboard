@@ -1,5 +1,4 @@
 import { execFileSync } from "child_process";
-execFileSync("gh", ["auth", "setup-git"]);
 /**
  * a minimal representation of the git cli, only supporting operations required
  * by this project.
@@ -44,5 +43,12 @@ export class Git {
     }
     push() {
         execFileSync("git", ["push"]);
+    }
+    /**
+     * `git checkout -b <branch>`
+     * @param branch name of the branch
+     */
+    checkoutB(branch) {
+        execFileSync("git", ['checkout', '-b', branch]);
     }
 }
