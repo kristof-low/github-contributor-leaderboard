@@ -64,14 +64,6 @@ if (readmeUpdated) {
 
         gh.prChecksWatchRequired();
 
-        const { mergeable, state } = gh.prStatusJsonCurrentBranch(
-            "mergeable",
-            "state"
-        );
-
-        if (state !== "MERGED" && mergeable !== "MERGEABLE")
-            throw new Error(`cannot merge pull request`);
-
-        if (state !== "MERGED") gh.prMergeSquashDelete();
+        if (gh.isCurrentPRMergeable) gh.prMergeSquashDelete();
     }
 }
