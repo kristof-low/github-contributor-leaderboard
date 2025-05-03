@@ -44,11 +44,14 @@ export class Git {
     push() {
         execFileSync("git", ["push"]);
     }
+    pushForce() {
+        execFileSync("git", ["push", "-f"]);
+    }
     /**
      * `git checkout -b <branch>`
      * @param branch name of the branch
      */
     checkoutB(branch) {
-        execFileSync("git", ['checkout', '-b', branch]);
+        execFileSync("git", ["checkout", "-b", branch]);
     }
 }
