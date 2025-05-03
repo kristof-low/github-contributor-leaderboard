@@ -57,11 +57,21 @@ if (readmeUpdated) {
         }
     }
     if (usePullRequest) {
-        gh.prCreateFillHead(checkoutBranchName);
-        waitSync(1000); // if you run `gh pr check` too soon after creating the PR,
-        // it will report no checks.
-        gh.prChecksWatchRequired();
-        if (gh.isCurrentPRMergeable)
-            gh.prMergeSquashDelete();
+        try {
+            gh.prCreateFillHead(checkoutBranchName);
+            waitSync(1000); // if you run `gh pr check` too soon after creating the PR,
+            // it will report no checks.
+            gh.prChecksWatchRequired();
+            if (gh.isCurrentPRMergeable)
+                gh.prMergeSquashDelete();
+        }
+        catch (e) {
+            const aPullRequestAlreadyExistsError = e instanceof Error &&
+                "stderr" in e &&
+                e.stderr instanceof Buffer &&
+                e.stderr.toString("utf8").includes("already exists");
+            if (!aPullRequestAlreadyExistsError)
+                throw e;
+        }
     }
 }
