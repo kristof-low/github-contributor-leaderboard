@@ -44,7 +44,7 @@ remove-item ./$tarballBasename
 $answer = Read-Host "Do you want to commit the changes? (y/n)"
 if ($answer -eq "y") {
     git add .
-    git commit -m "Update $packageName to version $packageVersion"
+    git commit -m "version $packageVersion"
     
     $versionArray = $packageVersion.Split('.');
     git tag -f "v$($versionArray[0])"
