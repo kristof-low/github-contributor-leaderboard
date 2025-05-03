@@ -35,7 +35,8 @@ export function getContributors(
     const raw = execSync(
         `gh api repos/${owner}/${repo}/contributors --paginate`
     ).toString();
-    const contributors = JSON.parse(raw)
+    const contributors = (JSON.parse(raw) as Contributor[])
+        .filter((contributor) => !/bot/i.test(contributor.type)) // filter out bot accounts
         .sort((a: any, b: any) => b.contributions - a.contributions)
         .slice(0, maxContributors);
     return contributors as Contributors;
