@@ -35,9 +35,11 @@ export class Git {
     add(filespec: string) {
         execFileSync("git", ["add", ...filespec.split(" ")]);
     }
+
     addAll() {
         this.add(".");
     }
+
     commit(message: string) {
         execFileSync("git", ["commit", "-m", message], {
             env: {
@@ -48,15 +50,20 @@ export class Git {
             },
         });
     }
+
     push() {
         execFileSync("git", ["push"]);
     }
-    
+
+    pushForce() {
+        execFileSync("git", ["push", "-f"]);
+    }
+
     /**
      * `git checkout -b <branch>`
      * @param branch name of the branch
      */
     checkoutB(branch: string) {
-        execFileSync("git", ['checkout', '-b', branch]);
+        execFileSync("git", ["checkout", "-b", branch]);
     }
 }

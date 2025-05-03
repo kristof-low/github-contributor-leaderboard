@@ -54,7 +54,23 @@ const readmeUpdated = updateREADME(leaderboard, {
 if (readmeUpdated) {
     git.add("README.md");
     git.commit(commitMessage);
-    git.push();
+
+    try {
+        git.push();
+    } catch (e) {
+        const sourceBranchOfPrevPullRequestStillExistsOnRemote =
+            usePullRequest &&
+            e instanceof Error &&
+            "stderr" in e &&
+            e.stderr instanceof Buffer &&
+            e.stderr.toString("utf8").includes("remote contains work");
+
+        if (sourceBranchOfPrevPullRequestStillExistsOnRemote) {
+            git.pushForce();
+        } else {
+            throw e;
+        }
+    }
 
     if (usePullRequest) {
         gh.prCreateFillHead(checkoutBranchName);
