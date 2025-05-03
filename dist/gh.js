@@ -56,11 +56,24 @@ export class Gh {
      *
      * @returns the `currentBranch` field of the response as a JS object with fields
      * as specified.
+     *
+     * @todo remove this?
      */
     prStatusJsonCurrentBranch(...fields) {
         const resJson = JSON.parse(execFileSync("gh", ["pr", "status", "--json", fields.join(",")], {
             encoding: "utf8",
         }));
         return resJson.currentBranch;
+    }
+    /**
+     * @returns `true` if the PR can be merged, otherwise `false`.
+     * Reasons for not being mergeable include:
+     * - the branch has no associated pr.
+     * - the pr has already been merged (`UNKNOWN`).
+     * - the pr requires reviews (`BLOCKED`).
+     * - the pr has merge conflicts (`DIRTY`).
+     */
+    get isCurrentPRMergeable() {
+        return JSON.parse(execFileSync("gh", ["pr", "status", "--json", "mergeStateStatus"], { encoding: "utf8" })).currentBranch?.mergeStateStatus === "CLEAN";
     }
 }

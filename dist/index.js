@@ -40,16 +40,28 @@ const readmeUpdated = updateREADME(leaderboard, {
 if (readmeUpdated) {
     git.add("README.md");
     git.commit(commitMessage);
-    git.push();
+    try {
+        git.push();
+    }
+    catch (e) {
+        const sourceBranchOfPrevPullRequestStillExistsOnRemote = usePullRequest &&
+            e instanceof Error &&
+            "stderr" in e &&
+            e.stderr instanceof Buffer &&
+            e.stderr.toString("utf8").includes("remote contains work");
+        if (sourceBranchOfPrevPullRequestStillExistsOnRemote) {
+            git.pushForce();
+        }
+        else {
+            throw e;
+        }
+    }
     if (usePullRequest) {
         gh.prCreateFillHead(checkoutBranchName);
         waitSync(1000); // if you run `gh pr check` too soon after creating the PR,
         // it will report no checks.
         gh.prChecksWatchRequired();
-        const { mergeable, state } = gh.prStatusJsonCurrentBranch("mergeable", "state");
-        if (state !== "MERGED" && mergeable !== "MERGEABLE")
-            throw new Error(`cannot merge pull request`);
-        if (state !== "MERGED")
+        if (gh.isCurrentPRMergeable)
             gh.prMergeSquashDelete();
     }
 }
